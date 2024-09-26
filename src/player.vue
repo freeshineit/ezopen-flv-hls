@@ -3,13 +3,13 @@
     <div id="container"></div>
     <div id="container-fullscreen"></div>
     <div class="btn-wrapper">
-      <button v-on:click="initEzopen">ezopen 私有流</button>
-      <button v-on:click="initFlv">flv 标准流</button>
-      <button v-on:click="initHls">hls 标准流</button>
+      <button v-on:click="initEzopenPlayer">ezopen player 私有流</button>
+      <button v-on:click="initFlvPlayer">flv player 标准流</button>
+      <button v-on:click="initHlsPlayer">hls player 标准流</button>
     </div>
     <div>
-      <button v-on:click="pause">pause</button>
       <button v-on:click="play">play</button>
+      <button v-on:click="pause">pause</button>
       <button v-on:click="fullScreen">fullScreen</button>
       <button v-on:click="destroy">销毁</button>
     </div>
@@ -44,19 +44,19 @@ export default {
   },
   methods: {
     /** 初始化 ezopen 协议私有流 */
-    initEzopen() {
+    initEzopenPlayer() {
       this.destroy();
       // 默认自动播放
       this.player = this.initPlayer(playerUrlList["ezopen"]);
     },
     /** 初始化 flv 标准流 */
-    initFlv() {
+    initFlvPlayer() {
       this.destroy();
       this.player = this.initPlayer(playerUrlList["flv"]);
       this.player.play();
     },
     /** 初始化 hls 标准流 */
-    initHls() {
+    initHlsPlayer() {
       this.destroy();
       this.player = this.initPlayer(playerUrlList["hls"]);
       this.player.play();
@@ -82,7 +82,6 @@ export default {
           ...options,
         });
       } else if (options.url.includes(".flv")) {
-
         // FIXME: 这是一个bug 后期会修复
         document.getElementById("container").style.width = width + 'px'
         document.getElementById("container").style.height = height + 'px'
@@ -119,7 +118,7 @@ export default {
         this.player.pause();
       }
     },
-    /** 全屏 */
+    /** 全屏 移动端H5 不支持 （因为 H5 不能使用快捷键退出） */
     fullScreen() {
       if (this.player) {
         if (this.player.fullscreen) {
