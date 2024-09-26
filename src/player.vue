@@ -25,13 +25,13 @@ const playerUrlList = {
   ezopen: {
     url: "ezopen://open.ys7.com/BC7900686/1.hd.live",
     accessToken:
-      "at.4uj94pyi7bxbun124f8zu2y10lwi8vh6-45hn5calrq-1l00y6t-hxmutic36",
+      "at.4uj94pyi7bxbun124f8zu2y10lwi8vh6-45hn5calrq-1l00y6t-hxmutic3",
   },
   flv: {
-    url: "https://rtmp01open.ys7.com:9188/v3/openlive/BC7900686_1_1.flv?expire=1758455431&id=759502184183341056&t=0fe3760021dafcf9d139395297a2c1f87927be456f3ebded69a38874aed2d317&ev=100", // https://play.com/9999.flv
+    url: "https://rtmp01open.ys7.com:9188/v3/openlive/BC7900686_1_1.flv?expire=175845543&id=759502184183341056&t=0fe3760021dafcf9d139395297a2c1f87927be456f3ebded69a38874aed2d317&ev=100",
   },
   hls: {
-    url: "https://open.ys7.com/v3/openlive/BC7900686_1_1.m3u8?expire=1758455431&id=759502184155979776&t=9fd1ec941bee0b781074655ea0621ed3cf8b675614a244dfb1e1e7753c652fc9&ev=100",
+    url: "https://open.ys7.com/v3/openlive/BC7900686_1_1.m3u8?expire=175845543&id=759502184155979776&t=9fd1ec941bee0b781074655ea0621ed3cf8b675614a244dfb1e1e7753c652fc9&ev=100",
   },
 };
 
