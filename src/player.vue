@@ -86,7 +86,7 @@ export default {
           staticPath: "/flv_decoder/", // 自定义解码库加载地址， 默认放置在服务器根目录下
           ...options,
         });
-      } else if (options.url.includes(".m3u6")) {
+      } else if (options.url.includes(".m3u8")) {
         return new HlsPlayer({
           id: "container",
           staticPath: "/hls_decoder/", // decoder静态资源文件夹 默认根目录
