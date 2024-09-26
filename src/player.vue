@@ -49,46 +49,53 @@ export default {
   methods: {
     initEzopen() {
       this.destroy();
-      this.player = this.ezopenPlayer();
-      this.player.play();
+      // 默认自动播放
+      this.player = this.initPlayer(playerUrlList["ezopen"]);
     },
     initFlv() {
       this.destroy();
-      this.player = this.flvPlayer();
+      this.player = this.initPlayer(playerUrlList["flv"]);
       this.player.play();
     },
     initHls() {
       this.destroy();
-      this.player = this.hlsPlayer();
+      this.player = this.initPlayer(playerUrlList["hls"]);
       this.player.play();
     },
-    ezopenPlayer() {
-      return new EZUIKit.EZUIKitPlayer({
-        id: "container",
-        width: 600,
-        height: 400,
-        template: "simple",
-        staticPath: "/ezuikit_static",
-        ...playerUrlList["ezopen"],
-      });
-    },
-    flvPlayer() {
-      return new EzuikitFlv({
-        id: "container", // support element id
-        width: 600,
-        height: 400,
-        staticPath: "/flv_decoder/", // 自定义解码库加载地址， 默认放置在服务器根目录下
-        ...playerUrlList["flv"],
-      });
-    },
-    hlsPlayer() {
-      return new HlsPlayer({
-        id: "container",
-        staticPath: "/hls_decoder/", // decoder静态资源文件夹 默认根目录
-        width: 600,
-        height: 400,
-        ...playerUrlList["hls"],
-      });
+
+    /**
+     * @description  ezopen  flv hls 播放器 三合一， 根据播放地址判断使用那一个播放器
+     * @param {object} options
+     * @param {string}
+     */
+    initPlayer(options = {}) {
+      if (/^ezopen:\/\//.test(options.url)) {
+        return new EZUIKit.EZUIKitPlayer({
+          id: "container",
+          width: 600,
+          height: 400,
+          template: "simple",
+          staticPath: "/ezuikit_static",
+          ...options,
+        });
+      } else if (options.url.includes(".flv")) {
+        return new EzuikitFlv({
+          id: "container", // support element id
+          width: 600,
+          height: 400,
+          staticPath: "/flv_decoder/", // 自定义解码库加载地址， 默认放置在服务器根目录下
+          ...options,
+        });
+      } else if (options.url.includes(".m3u6")) {
+        return new HlsPlayer({
+          id: "container",
+          staticPath: "/hls_decoder/", // decoder静态资源文件夹 默认根目录
+          width: 600,
+          height: 400,
+          ...options,
+        });
+      }
+      throw new Error("不支持播放地址");
     },
 
     init() {
