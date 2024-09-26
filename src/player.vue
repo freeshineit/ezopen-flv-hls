@@ -1,16 +1,14 @@
 <template>
   <div class="player">
-    <div id="container" style="width: 600px; height: 400px"></div>
+    <div id="container"></div>
     <div id="container-fullscreen"></div>
-
-    <div>
-      <button v-on:click="initEzopen">ezopen</button>
-      <button v-on:click="initFlv">flv</button>
-      <button v-on:click="initHls">hls</button>
+    <div class="btn-wrapper">
+      <button v-on:click="initEzopen">ezopen 私有流</button>
+      <button v-on:click="initFlv">flv 标准流</button>
+      <button v-on:click="initHls">hls 标准流</button>
     </div>
     <div>
-      <button v-on:click="init">init</button>
-      <button v-on:click="stop">stop</button>
+      <button v-on:click="pause">pause</button>
       <button v-on:click="play">play</button>
       <button v-on:click="fullScreen">fullScreen</button>
       <button v-on:click="destroy">销毁</button>
@@ -39,24 +37,25 @@ const playerUrlList = {
 
 export default {
   name: "player",
-  props: {
-    msg: String,
-  },
+  props: {},
   mounted: () => {},
   data: () => {
     return { player: null };
   },
   methods: {
+    /** 初始化 ezopen 协议私有流 */
     initEzopen() {
       this.destroy();
       // 默认自动播放
       this.player = this.initPlayer(playerUrlList["ezopen"]);
     },
+    /** 初始化 flv 标准流 */
     initFlv() {
       this.destroy();
       this.player = this.initPlayer(playerUrlList["flv"]);
       this.player.play();
     },
+    /** 初始化 hls 标准流 */
     initHls() {
       this.destroy();
       this.player = this.initPlayer(playerUrlList["hls"]);
@@ -66,23 +65,32 @@ export default {
     /**
      * @description  ezopen  flv hls 播放器 三合一， 根据播放地址判断使用那一个播放器
      * @param {object} options
-     * @param {string}
+     * @param {string} options.url
+     * @param {string=} options.accessToken
      */
     initPlayer(options = {}) {
+      const width = window.screen.width
+      const height = width * (9 /16)
+
       if (/^ezopen:\/\//.test(options.url)) {
         return new EZUIKit.EZUIKitPlayer({
           id: "container",
-          width: 600,
-          height: 400,
+          width: width,
+          height: height,
           template: "simple",
           staticPath: "/ezuikit_static",
           ...options,
         });
       } else if (options.url.includes(".flv")) {
+
+        // FIXME: 这是一个bug 后期会修复
+        document.getElementById("container").style.width = width + 'px'
+        document.getElementById("container").style.height = height + 'px'
+ 
         return new EzuikitFlv({
           id: "container", // support element id
-          width: 600,
-          height: 400,
+          width: width,
+          height: height,
           staticPath: "/flv_decoder/", // 自定义解码库加载地址， 默认放置在服务器根目录下
           ...options,
         });
@@ -90,37 +98,40 @@ export default {
         return new HlsPlayer({
           id: "container",
           staticPath: "/hls_decoder/", // decoder静态资源文件夹 默认根目录
-          width: 600,
-          height: 400,
+          width: width,
+          height: height,
           ...options,
         });
       }
       throw new Error("不支持播放地址");
     },
 
-    init() {
-      if (this.player) {
-        this.player.destroy();
-        this.player = null;
-      }
 
-      this.player = this.flvPlayer();
-      this.player.play();
-    },
-
+    /** 播放 */
     play() {
-      this.player.play();
-    },
-    stop() {
-      this.player.pause();
-    },
-    fullScreen() {
-      if (this.player.fullscreen) {
-        this.player.fullscreen();
-      } else {
-        this.player.fullScreen?.();
+      if (this.player) {
+        this.player.play();
       }
     },
+    /** 暂停 */
+    pause() {
+      if (this.player) {
+        this.player.pause();
+      }
+    },
+    /** 全屏 */
+    fullScreen() {
+      if (this.player) {
+        if (this.player.fullscreen) {
+          this.player.fullscreen();
+        } else {
+          // ezopen 协议 
+          // FIXME: 后面版本会统一
+          this.player.fullScreen?.();
+        }
+      }
+    },
+    /** 销毁 */
     destroy() {
       if (this.player) {
         this.player.destroy();
@@ -130,3 +141,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.btn-wrapper {
+  padding-top: 20px;
+}
+</style>
