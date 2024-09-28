@@ -138,6 +138,10 @@ export default {
       }
     },
   },
+  beforeDestroy() {
+    // 组件销毁前， 销毁播放器 防止内存泄漏
+    this.destroy()
+  }
 };
 </script>
 
