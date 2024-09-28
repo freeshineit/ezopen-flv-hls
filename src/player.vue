@@ -47,38 +47,46 @@ export default {
     initEzopenPlayer() {
       this.destroy();
       // 默认自动播放
-      this.player = this.initPlayer(playerUrlList["ezopen"]);
+      this.player = this.initPlayer("container", playerUrlList["ezopen"]);
     },
     /** 初始化 flv 标准流 */
     initFlvPlayer() {
       this.destroy();
-      this.player = this.initPlayer(playerUrlList["flv"]);
+      this.player = this.initPlayer("container", playerUrlList["flv"]);
       this.player.play();
     },
     /** 初始化 hls 标准流 */
     initHlsPlayer() {
       this.destroy();
-      this.player = this.initPlayer(playerUrlList["hls"]);
+      this.player = this.initPlayer("container", playerUrlList["hls"]);
       this.player.play();
     },
 
     /**
      * @description  ezopen  flv hls 播放器 三合一， 根据播放地址判断使用那一个播放器
-     * @param {object} options
-     * @param {string} options.url
-     * @param {string=} options.accessToken
+     * @param {string} id 容器id
+     * @param {object} options 播放器配置
+     * @param {string} options.url 播放地址
+     * @param {string=} options.accessToken ezopen 协议的流需要
      */
-    initPlayer(options = {}) {
+    initPlayer(id, options = {}) {
+
+      // 下面的宽高适用 移动端H5
       const width = window.screen.width
       const height = width * (9 /16)
 
+      // 判断容器节点是否存在
+      if (!document.getElementById(id)) {
+        throw new Error(`${id} node does not exist!`)
+      }
+
       if (/^ezopen:\/\//.test(options.url)) {
         return new EZUIKit.EZUIKitPlayer({
-          id: "container",
+          id,
           width: width,
           height: height,
           template: "simple",
-          staticPath: "/ezuikit_static",
+          staticPath: "/ezuikit_static", // 强烈推荐 资源放置在项目服务器根目录
           ...options,
         });
       } else if (options.url.includes(".flv")) {
@@ -87,7 +95,7 @@ export default {
         document.getElementById("container").style.height = height + 'px'
  
         return new EzuikitFlv({
-          id: "container", // support element id
+          id, // support element id
           width: width,
           height: height,
           staticPath: "/flv_decoder/", // 自定义解码库加载地址， 默认放置在服务器根目录下
@@ -95,16 +103,16 @@ export default {
         });
       } else if (options.url.includes(".m3u8")) {
         return new HlsPlayer({
-          id: "container",
+          id,
           staticPath: "/hls_decoder/", // decoder静态资源文件夹 默认根目录
           width: width,
           height: height,
           ...options,
         });
       }
+
       throw new Error("不支持播放地址");
     },
-
 
     /** 播放 */
     play() {
